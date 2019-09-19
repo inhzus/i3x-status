@@ -7,6 +7,7 @@ import sys
 import signal
 
 
+open('/tmp/i3x.status', 'r')
 fifo = open('/tmp/i3x.status', 'w')
 signal.signal(signal.SIGINT, lambda: fifo.write('spotify|\n'))
 
@@ -19,7 +20,7 @@ try:
         metadata = spotify_properties.Get("org.mpris.MediaPlayer2.Player", "Metadata")
         title = str(metadata[dbus.String('xesam:title')])
         artist = str(metadata[dbus.String('xesam:artist')][0])
-        s = 'spotify|{} |> {}\n'.format(artist, title)
+        s = 'spotify|{} > {}\n'.format(artist, title)
 #        print(s, end='')
         fifo.write(s)
         fifo.flush()
