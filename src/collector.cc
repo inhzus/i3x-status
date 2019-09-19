@@ -3,12 +3,12 @@
 //
 
 #include "collector.h"
+#include "utils.h"
+
 #include <cerrno>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-std::string readline(int);
 
 Collector::Collector() : fd_(STDIN_FILENO) {}
 
@@ -70,16 +70,4 @@ void Collector::append(const std::shared_ptr<Block> &block) {
   blocks_.insert(
       typename std::pair<const std::string, std::shared_ptr<Block>>(
           block->getName(), block));
-}
-
-std::string readline(int fd) {
-  char c;
-  std::string buf;
-  while (read(fd, &c, 1) > 0) {
-    if (c == '\n') {
-      break;
-    }
-    buf.push_back(c);
-  }
-  return buf;
 }
