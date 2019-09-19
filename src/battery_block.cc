@@ -37,13 +37,13 @@ void PowerBlock::update() {
   std::regex_search(s, match, pattern);
   std::string status = match[1].str();
   percent_ = std::stoi(match[2].str());
-  if (caseEqual(status, "Discharging") == 0) {
+  if (caseEqual(status, "Discharging")) {
     status_ = POWER_BAT;
-  } else if (caseEqual(status, "Unknown") == 0) {
+  } else if (caseEqual(status, "Unknown")) {
     status_ = POWER_BAT;
-  } else if (caseEqual(status, "Charging") == 0) {
+  } else if (caseEqual(status, "Charging")) {
     status_ = POWER_AC;
-  } else if (caseEqual(status, "Full") == 0) {
+  } else if (caseEqual(status, "Full")) {
     status_ = POWER_FULL;
   } else {
     status_ = POWER_BAT;
