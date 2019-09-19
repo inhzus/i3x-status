@@ -11,9 +11,12 @@
 
 class Collector {
  private:
+  int fd_;
   std::map<std::string, std::shared_ptr<Block>> blocks_;
  public:
-  Collector() = default;
+  Collector();
+  explicit Collector(int fd);
+  explicit Collector(const char *filename);
   void update();
   void print(int fd) const;
   void append(const std::shared_ptr<Block> &block);

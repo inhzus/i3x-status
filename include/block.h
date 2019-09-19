@@ -48,4 +48,13 @@ class TimeBlock : public Block {
   std::string format() override;
 };
 
+class CustomBlock : public Block {
+ private:
+  std::string desc_;
+ public:
+  explicit CustomBlock(std::string name, std::string desc);
+  void update() override;
+  std::string format() override;
+};
+
 #endif //I3X_STATUS_BLOCK_H
