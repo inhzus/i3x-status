@@ -7,7 +7,7 @@
 
 #include <regex>
 
-char const *BLOCK_NAME_POWER = "power";
+char const *BLOCK_NAME_POWER = "~power";
 
 bool caseEqual(const std::string &l, const std::string &r) {
   return std::equal(
@@ -29,8 +29,6 @@ void PowerBlock::update() {
   if (s.empty()) {
     return;;
   }
-  char bat[20];
-  int index;
   std::regex pattern("\\d: ([^,]+), (\\d+)"); // NOLINT
   // (modernize-raw-string-literal)
   std::smatch match;

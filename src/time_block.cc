@@ -5,7 +5,7 @@
 #include "block.h"
 #include <iomanip>
 
-char const *BLOCK_NAME_TIME = "time";
+char const *BLOCK_NAME_TIME = "~time";
 
 TimeBlock::TimeBlock() :
     Block(BLOCK_NAME_TIME), now_() {
