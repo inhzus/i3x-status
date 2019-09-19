@@ -5,7 +5,6 @@
 #include "block.h"
 #include "utils.h"
 
-#include <cstring>
 #include <regex>
 
 char const *BLOCK_NAME_POWER = "power";

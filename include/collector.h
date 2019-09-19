@@ -12,6 +12,7 @@
 class Collector {
  private:
   int fd_;
+  mutable bool first_;
   std::map<std::string, std::shared_ptr<Block>> blocks_;
  public:
   Collector();

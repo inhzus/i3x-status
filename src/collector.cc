@@ -10,14 +10,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-Collector::Collector() : fd_(STDIN_FILENO) {}
+Collector::Collector() : fd_(STDIN_FILENO), first_(true) {}
 
-Collector::Collector(int fd) : fd_(fd) {
+Collector::Collector(int fd) : fd_(fd), first_(true) {
   auto flags = fcntl(fd, F_GETFL, 0);
   fcntl(fd, F_SETFL, flags | O_NONBLOCK); // NOLINT(hicpp-signed-bitwise)
 }
 
-Collector::Collector(const char *fifo_name) {
+Collector::Collector(const char *fifo_name) : first_(true) {
   auto FIFO_MODE =
       (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH); // NOLINT(hicpp-signed-bitwise)
   if ((mkfifo(fifo_name, FIFO_MODE) < 0) && (errno != EEXIST)) {
@@ -53,17 +53,27 @@ void Collector::update() {
 }
 
 void Collector::print(int fd) const {
-  bool isFirst = true;
+  char const *itemFormat = R"({"name":"%s","markup":"none","full_text":"%s"})";
+  FILE *fp = fdopen(fd, "w");
+  if (first_) {
+    first_ = false;
+    fprintf(fp, "{\"version\":1}\n[\n[");
+    fflush(fp);
+  } else {
+    fprintf(fp, ",[");
+  }
+  bool isFirstItem = true;
   for (auto &pair : blocks_) {
     const std::string &s = pair.second->format();
-    if (isFirst) {
-      isFirst = false;
+    if (isFirstItem) {
+      isFirstItem = false;
     } else {
-      write(fd, " | ", 3);
+      fprintf(fp, ",");
     }
-    write(fd, s.c_str(), s.size());
+    fprintf(fp, itemFormat, pair.second->getName().c_str(), s.c_str());
   }
-  write(fd, "\n", 1);
+  fprintf(fp, "]\n");
+  fflush(fp);
 }
 
 void Collector::append(const std::shared_ptr<Block> &block) {
