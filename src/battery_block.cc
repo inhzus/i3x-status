@@ -60,9 +60,9 @@ std::string PowerBlock::format() {
     case POWER_FULL:c = "\uF213";
       break;
   }
-  char const *format = "%s %d%%%%";
-  auto size = snprintf(nullptr, 0, format, c, percent_);
-  std::unique_ptr<char[]> buf(new char[size + 1]);
+  char const *format = "%s %d%%";
+  auto size = snprintf(nullptr, 0, format, c, percent_) + 1;
+  std::unique_ptr<char[]> buf(new char[size]);
   snprintf(buf.get(), size, format, c, percent_);
-  return std::string(buf.get(), buf.get() + size);
+  return std::string(buf.get(), buf.get() + size - 1);
 }
