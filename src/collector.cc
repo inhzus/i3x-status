@@ -8,7 +8,6 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 Collector::Collector() : fd_(STDIN_FILENO), first_(true) {}
 
@@ -52,9 +51,8 @@ void Collector::update() {
   }
 }
 
-void Collector::print(int fd) const {
+void Collector::print(FILE *fp) const {
   char const *itemFormat = R"({"name":"%s","markup":"none","full_text":"%s"})";
-  FILE *fp = fdopen(fd, "w");
   if (first_) {
     first_ = false;
     fprintf(fp, "{\"version\":1}\n[\n[");

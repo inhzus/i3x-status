@@ -8,6 +8,7 @@
 #include "block.h"
 #include <map>
 #include <memory>
+#include <unistd.h>
 
 class Collector {
  private:
@@ -19,7 +20,7 @@ class Collector {
   explicit Collector(int fd);
   explicit Collector(const char *filename);
   void update();
-  void print(int fd) const;
+  void print(FILE *fp) const;
   void append(const std::shared_ptr<Block> &block);
 };
 

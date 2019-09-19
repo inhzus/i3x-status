@@ -22,7 +22,7 @@ int main() {
       break;
     }
     collector.update();
-    collector.print(STDOUT_FILENO);
+    collector.print(stdout);
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
   return 0;
