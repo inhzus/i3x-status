@@ -19,6 +19,6 @@ void TimeBlock::update() {
 std::string TimeBlock::format() {
   char buf[256];
   std::tm *info = localtime(&now_);
-  strftime(buf, sizeof(buf), "%d/%m %H:%M", info);
+  strftime(buf, sizeof(buf), "%d/%m %H:%M ", info);
   return std::string(buf);
 }
