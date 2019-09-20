@@ -9,7 +9,13 @@ Here i3x-status struggles to hold as a server provided with basic info, and read
 
 **i3x-status** natively support basic status info including battery and time. Besides, it read from the FIFO "/tmp/i3x.status" with option, O_NONBLOCK. The protocol for FIFO is very simple as "{name}|{info}\n".
 
-So if extra status info is needed, just write another script to write the info into the FIFO. There has been a spotify status [example](https://github.com/inhzus/i3x-status/blob/master/scripts/spotify-status.py) in the directory *scripts*.
+So if extra status info is needed, just write another script to write the info into the FIFO.
+
+### Example
+
+- [spotify playtrack](https://github.com/inhzus/i3x-status/blob/master/scripts/spotify-status.py)
+
+- [volume control](https://github.com/inhzus/linux-config/blob/master/scripts/volume.sh)
 
 ## Consideration
 
