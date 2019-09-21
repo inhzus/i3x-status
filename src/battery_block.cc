@@ -22,18 +22,20 @@ PowerBlock::PowerBlock() :
   update();
 }
 
-void PowerBlock::update() {
+bool PowerBlock::update() {
   FILE *fp = popen("acpi -b", "r");
   int fd = fileno(fp);
   std::string s = readline(fd);
   if (s.empty()) {
-    return;;
+    return false;
   }
   std::regex pattern("\\d: ([^,]+), (\\d+)"); // NOLINT
   // (modernize-raw-string-literal)
   std::smatch match;
   std::regex_search(s, match, pattern);
   std::string status = match[1].str();
+  unsigned oldPercent = percent_;
+  Status oldStatus = status_;
   percent_ = std::stoi(match[2].str());
   if (caseEqual(status, "Discharging")) {
     status_ = POWER_BAT;
@@ -47,6 +49,7 @@ void PowerBlock::update() {
     status_ = POWER_BAT;
   }
   pclose(fp);
+  return oldPercent != percent_ || oldStatus != status_;
 }
 
 std::string PowerBlock::format() {

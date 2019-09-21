@@ -9,8 +9,11 @@
 CustomBlock::CustomBlock(std::string name, std::string desc) :
     Block(std::move(name)), desc_(std::move(desc)) {}
 
-void CustomBlock::update() {}
+bool CustomBlock::update() { return false; }
 
 std::string CustomBlock::format() {
   return desc_;
+}
+void CustomBlock::setDesc(std::string desc) {
+  desc_ = std::move(desc);
 }

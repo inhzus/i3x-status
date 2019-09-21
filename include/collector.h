@@ -19,7 +19,7 @@ class Collector {
   Collector();
   explicit Collector(int fd);
   explicit Collector(const char *filename);
-  void update();
+  bool update();
   void print(FILE *fp) const;
   void append(const std::shared_ptr<Block> &block);
 };

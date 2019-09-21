@@ -28,27 +28,50 @@ Collector::Collector(const char *fifo_name) : first_(true) {
   open(fifo_name, O_WRONLY, 0);
 }
 
-void Collector::update() {
+bool Collector::update() {
+  bool updated = false;
   for (auto &pair : blocks_) {
-    pair.second->update();
+    updated |= pair.second->update();
   }
-  while (true) {
-    std::string s = readline(fd_);
-    if (s.empty()) break;
-    const char delimiter[] = "|";
-    auto pos = s.find(delimiter);
-    if (pos == std::string::npos) {
-      fprintf(stderr, "line format not allowed: %s", s.c_str());
-    }
-    std::string name = s.substr(0, pos),
-        desc = s.substr(pos + 1, s.size());
-    if (desc.empty()) {
-      blocks_.erase(name);
-      continue;
-    }
-    auto block = std::make_shared<CustomBlock>(name, desc);
-    blocks_[name] = block;
+  if (first_ || updated) {
+    return true;
   }
+  fd_set fifoSet;
+  FD_ZERO(&fifoSet);
+  int second = std::dynamic_pointer_cast<TimeBlock>(
+      blocks_[BLOCK_NAME_TIME])->getSecond();
+  timeval timeout{std::min(10, second), 0};
+  FD_SET(fd_, &fifoSet);
+  select(fd_ + 1, &fifoSet, nullptr, nullptr, &timeout);
+  if (!FD_ISSET(fd_, &fifoSet)) {
+    return updated;
+  }
+  std::string s = readline(fd_);
+  if (s.empty()) return updated;
+  const char delimiter[] = "|";
+  auto pos = s.find(delimiter);
+  if (pos == std::string::npos) {
+    fprintf(stderr, "line format not allowed: %s", s.c_str());
+  }
+  std::string name = s.substr(0, pos),
+      desc = s.substr(pos + 1, s.size());
+  if (desc.empty()) {
+    blocks_.erase(name);
+    return updated;
+  }
+  auto block = std::make_shared<CustomBlock>(name, desc);
+  auto oldBlock = blocks_[name];
+  std::shared_ptr<CustomBlock> customBlock =
+      std::dynamic_pointer_cast<CustomBlock>(oldBlock);
+  if (!customBlock) {
+    updated = true;
+    blocks_[name] = std::make_shared<CustomBlock>(name, desc);
+  } else if (desc != customBlock->format()) {
+    updated = true;
+    customBlock->setDesc(desc);
+  }
+  blocks_[name] = block;
+  return updated;
 }
 
 void Collector::print(FILE *fp) const {

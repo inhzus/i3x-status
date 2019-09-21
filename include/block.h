@@ -25,7 +25,7 @@ class Block {
   Block() = default;
   explicit Block(std::string name) : name_(std::move(name)) {};
   [[nodiscard]] std::string getName() const { return name_; }
-  virtual void update() = 0;
+  virtual bool update() = 0;
   virtual std::string format() = 0;
 };
 
@@ -35,17 +35,18 @@ class PowerBlock : public Block {
   unsigned percent_;
  public:
   explicit PowerBlock();
-  void update() override;
+  bool update() override;
   std::string format() override;
 };
 
 class TimeBlock : public Block {
  private:
-  time_t now_;
+  std::tm *now_;
  public:
   explicit TimeBlock();
-  void update() override;
+  bool update() override;
   std::string format() override;
+  int getSecond();
 };
 
 class CustomBlock : public Block {
@@ -53,8 +54,9 @@ class CustomBlock : public Block {
   std::string desc_;
  public:
   explicit CustomBlock(std::string name, std::string desc);
-  void update() override;
+  bool update() override;
   std::string format() override;
+  void setDesc(std::string desc);
 };
 
 #endif //I3X_STATUS_BLOCK_H
