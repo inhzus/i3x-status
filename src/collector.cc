@@ -57,6 +57,7 @@ bool Collector::update() {
       desc = s.substr(pos + 1, s.size());
   if (desc.empty()) {
     blocks_.erase(name);
+    updated = true;
     return updated;
   }
   auto block = std::make_shared<CustomBlock>(name, desc);
